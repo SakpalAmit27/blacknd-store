@@ -4,11 +4,17 @@ const app = express();
 
 const port = 3000 || process.env.PORT;
 
-const dotenv = require('dotenv')
+import dotenv from 'dotenv'
+// importing our db // 
 
-// basic get boilerplae  // 
+import connectDB from './config/db.js';
+
+// basic get boilerplate  // 
 
 dotenv.config()
+
+// calling to connect the db / 
+connectDB()
 
 app.get('/',(req,res) => {
     res.send('welcome to BLACKND')
