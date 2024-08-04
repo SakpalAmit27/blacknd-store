@@ -1,74 +1,47 @@
-// controller to handle user request eg : login and signup .// 
+import User from '../models/userModel.js';
+import bcrypt from 'bcrypt';
+import crypto from 'crypto';
+import jwt from 'jsonwebtoken'; // For future use, e.g., for authentication
 
-// ex / 
+const RegisterUser = async (req, res) => {
+    const { name, email, password } = req.body;
 
-import express from 'express'
+    try {
+        // Check if user already exists
+        const existingUser = await User.findOne({ email });
 
-// adding our user model here // s
-
-import User from '../models/userModel'
-
-// router for routing // 
-const router = express.Router();
-
-// bcrypt for hashing // 
-
-import bcrypt from 'bcrypt'
-
-
-import crypto from 'crypto'
-// json web token .. 
-
-import jwt from 'jsonwebtoken'
-
-// 1 : async function to register the user .. 
-
-const RegisterUser = async (req,res) => {
-    // essentials // 
-
-    const {name,email,password} = req.body;
-
-    try{
-        // finding the user email if he exists already// 
-
-
-        let user = await User.findOne({email});
-
-        if(user){
-            return res.status(400).json({message:"user already exists , please login"})
+        if (existingUser) {
+            return res.status(400).json({ message: "User already exists, please log in." });
         }
 
-        // if he doesnt exist // 
+        // Hash the password
+        const hashedPassword = await bcrypt.hash(password, 10);
 
-        // hashing the password .. 
+        // Generate verification token
+        const verificationToken = crypto.randomBytes(32).toString('hex');
 
-        const hashedPassword = await bcrypt.hash(password,10);
-
-        const verificationToken = crypto.randomBytes(32).toString('hex')
-
-        // now create the new user /
-
-        user = new User ({
+        // Create new user
+        const newUser = new User({
             name,
             email,
-            password:hashedPassword,
-            verificationToken:verificationToken,
-            isVerified:false
-        })
-        // saving the user // 
+            password: hashedPassword,
+            verificationToken,
+            isVerified: false,
+        });
 
-        await user.save()
-        // printing the verification token after register // 
+        // Save user to the database
+        await newUser.save();
 
-        console.log(`verification token : ${verificationToken}`)
+        // Print verification token (for testing purposes)
+        console.log(`Verification token: ${verificationToken}`);
 
-        res.status(201).json({message:"user registered successfully"})
+        // Respond to client
+        res.status(201).json({ message: "User registered successfully." });
 
-
-    }catch(error){
-        console.error(error.message)
-        res.status(500).send('Server error')
+    } catch (error) {
+        console.error('Error in RegisterUser:', error.message);
+        res.status(500).send('Server error');
     }
-}
+};
 
 export default RegisterUser;

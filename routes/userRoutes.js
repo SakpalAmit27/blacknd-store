@@ -1,8 +1,7 @@
 import express from 'express'
 
 // importing our controller // 
-import RegisterUser from '../controllers/userController'
-
+import RegisterUser from '../controllers/userController.js';
 const router = express.Router();
 
 // creating the endpoint .. 

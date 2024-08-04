@@ -1,27 +1,29 @@
-import express from 'express'
+import express from 'express';
+import dotenv from 'dotenv';
+import connectDB from './config/db.js';
+import userRoutes from './routes/userRoutes.js';
+
+dotenv.config();  // Load environment variables first
 
 const app = express();
 
-const port = 3000 || process.env.PORT;
+// Port configuration
+const port = process.env.PORT || 3000;
 
-import dotenv from 'dotenv'
-// importing our db // 
+// Connect to the database
+connectDB();
 
-import connectDB from './config/db.js';
+// Middleware
+app.use(express.json());  // Parse JSON requests
 
-// basic get boilerplate  // 
+// Routes
+app.use('/api/users', userRoutes);
 
-dotenv.config()
+app.get('/', (req, res) => {
+    res.send('Welcome to BLACKND');
+});
 
-// calling to connect the db / 
-connectDB()
-
-app.get('/',(req,res) => {
-    res.send('welcome to BLACKND')
-})
-
-// listenong the port // 
-
-app.listen(port,(req,res) => {
-    console.log(`port : ${port}`)
-})
+// Start the server
+app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+});
