@@ -32,7 +32,7 @@ const RegisterUser = async (req,res) => {
         // finding the user email if he exists already// 
 
 
-        let user = User.findOne({email});
+        let user = await User.findOne({email});
 
         if(user){
             return res.status(400).json({message:"user already exists , please login"})
@@ -44,7 +44,29 @@ const RegisterUser = async (req,res) => {
 
         const hashedPassword = await bcrypt.hash(password,10);
 
+        const verificationToken = crypto.randomBytes(32).toString('hex')
+
+        // now create the new user /
+
+        user = new User ({
+            name,
+            email,
+            password:hashedPassword,
+            verificationToken:verificationToken,
+            isVerified:false
+        })
+        // saving the user // 
+
+        await user.save()
+        // printing the verification token after register // 
+
+        console.log(`verification token : ${verificationToken}`)
+
+        res.status(201).json({message:"user registered successfully"})
 
 
+    }catch(error){
+        console.error(error.message)
+        res.status(500).send('Server error')
     }
 }
