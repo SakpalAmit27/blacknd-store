@@ -1,4 +1,4 @@
-import User from "../models/userModel";
+import User from "../models/userModel.js";
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 
@@ -16,7 +16,7 @@ const LoginUser = async (req,res) => {
         // check user with email .. / 
 
 
-        let user = User.findOne({email})
+        let user = await User.findOne({email})
 
         // if he does not exist // 
 
