@@ -1,26 +1,23 @@
+// token verification / 
 
 import jwt from 'jsonwebtoken'
 
-// importing our user model // 
+const authenticateToken = async (req,res,next) => {
+    const authHeader = req.headers['authorization'];
 
-import User from '../models/userModel'
+    const token = authHeader && authHeader.split(' ')[1];
 
-const authMiddleware = async (req,res,next) => {
+    if(token == null) return res.status(401).json({message:'token expired'})
 
-    const token = req.header('Authorization').replace('Bearer ','')
+    // verify the token // 
 
-    if(!token){
-        res.status(401).json({message:"no token , authorization denied"})
-    }
+    jwt.verify(token,process.env.JWT_SECRET , (err,user) => {
+        if(err) return res.status(403).json({message:'invalid token'});
 
-    try{
-        const decoded = jwt.verify(token,process.env.JWT_SECRET)
-        req.user = decoded.userId
+        req.user = user;
         next();
-    }catch(error){
-        console.error(error.message)
-        res.status(400).json({message:"token is not valid"})
-    }
+    })
+
 }
 
-export default authMiddleware;
+export default authenticateToken;
