@@ -8,9 +8,9 @@ const RegisterUser = async (req, res) => {
 
     // checking missing input fields // 
 
-    if(!name || !email || !password){
-        return res.status(400).json({message:"please provide required fields"})
-    }
+    // if(!name || !email || !password){
+    //     return res.status(400).json({message:"please provide required fields"})
+    // }
 
 
     try {
