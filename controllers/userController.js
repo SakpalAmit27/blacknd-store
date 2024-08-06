@@ -6,6 +6,13 @@ import jwt from 'jsonwebtoken'; // For future use, e.g., for authentication
 const RegisterUser = async (req, res) => {
     const { name, email, password } = req.body;
 
+    // checking missing input fields // 
+
+    if(!name || !email || !password){
+        return res.status(400).json({message:"please provide required fields"})
+    }
+
+
     try {
         // Check if user already exists
         const existingUser = await User.findOne({ email });
