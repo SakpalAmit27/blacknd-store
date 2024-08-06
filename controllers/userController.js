@@ -44,42 +44,4 @@ const RegisterUser = async (req, res) => {
     }
 };
 
-const LoginUser = async (req,res) => {
-    // in elements we will take these elements // 
-    const {email,password} = req.body
-
-    // check if user exists // 
-
-
-    try{
-        let user = await User.findOne({email})
-
-        // if the user does not exist // 
-
-        if(!user){
-            return res.status(400).json({message:"User does not exist , please register first"})
-        }
-
-        // if he doess // 
-        // hash the password // 
-
-        const isMatch = await bcrypt.compare(password,user.password)
-
-        if(!isMatch){
-            return res.json(400).json({message:"invalid email or password , please try again"})
-        }
-        // if it does generate jwt token for the use  // 
-
-        const token = await jwt.sign({userId = user._id}, process.env.JWT_SECRET ,{expiresIn:'1h'})
-
-        // json the token // 
-
-        res.status(200).json(token)
-    }catch(error){
-        console.error(error.message)
-
-        res.status(500).send('Server error')
-    }
-}
-
 export default RegisterUser;
